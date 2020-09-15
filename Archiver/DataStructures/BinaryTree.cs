@@ -6,38 +6,20 @@ namespace Archiver.DataStructures
     {
         public TreeNode<T> Root { get; private set; }
 
-        public BinaryTree(TreeNode<T> root)
+        public BinaryTree(T value, int priority)
         {
-            Root = root;
+            Root = new TreeNode<T>(value, priority);
         }
 
-        public void Merge(IBinaryTree<T> otherNode)
+        public void Merge(IBinaryTree<T> otherTree)
         {
             Root = new TreeNode<T>
             {
                 Value = default,
-                Priority = Root.Priority + otherNode.Root.Priority,
+                Priority = Root.Priority + otherTree.Root.Priority,
                 Left = Root,
-                Right = otherNode.Root
+                Right = otherTree.Root
             };
-        }
-
-        public bool Contains(T value)
-        {
-            return Search(Root, value);
-        }
-
-        private bool Search(TreeNode<T> current, T value)
-        {
-            if (current.Left != null)
-            {
-                Search(current.Left, value);
-            }
-            else if (current.Right != null)
-            {
-                Search(current.Right, value);
-            }
-            return current.Value.Equals(value);
         }
     }
 }

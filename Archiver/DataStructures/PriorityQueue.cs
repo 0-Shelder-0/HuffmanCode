@@ -8,25 +8,56 @@ namespace Archiver.DataStructures
     {
         private List<QueueNode<TKey>> _tree;
 
+        public int Count { get; private set; }
+
         public void Add(TKey key, int value)
         {
+            var queueNode = new QueueNode<TKey>(key, value);
             if (_tree == null)
             {
-                _tree = new List<QueueNode<TKey>> {new QueueNode<TKey>(key, value)};
+                _tree = new List<QueueNode<TKey>> {queueNode};
             }
             else
             {
-                _tree.Add(new QueueNode<TKey>(key, value));
+                _tree.Add(queueNode);
                 HeapifyUp();
+            }
+            Count++;
+        }
+
+        public void Merge(IPriorityQueue<TKey> otherQueue)
+        {
+            if (Count >= otherQueue.Count)
+            {
+                Merge(this, otherQueue);
+            }
+            else
+            {
+                Merge(otherQueue, this);
+            }
+        }
+
+        private static void Merge(IPriorityQueue<TKey> queue,
+                                  IPriorityQueue<TKey> otherQueue)
+        {
+            while (otherQueue.Count > 0)
+            {
+                var (key, value) = otherQueue.ExtractMin();
+                queue.Add(key, value);
             }
         }
 
         public Tuple<TKey, int> ExtractMin()
         {
+            if (Count == 0)
+            {
+                throw new InvalidOperationException();
+            }
             var min = _tree[0];
             _tree[0] = _tree[^1];
             _tree.RemoveAt(_tree.Count - 1);
             HeapifyDown();
+            Count--;
 
             return Tuple.Create(min.Key, min.Value);
         }
@@ -43,8 +74,7 @@ namespace Archiver.DataStructures
 
                 if (_tree[current].Value > _tree[minChild].Value)
                 {
-                    (_tree[current].Value, _tree[minChild].Value) =
-                        (_tree[minChild].Value, _tree[current].Value);
+                    (_tree[current], _tree[minChild]) = (_tree[minChild], _tree[current]);
                     current = minChild;
                 }
                 else
@@ -68,7 +98,7 @@ namespace Archiver.DataStructures
             var index = _tree.Count - 1;
             var parent = (index - 1) / 2;
 
-            while (index > 0 && _tree[parent].Value > _tree[index].Value)
+            while (_tree[parent].Value > _tree[index].Value)
             {
                 (_tree[index], _tree[parent]) = (_tree[parent], _tree[index]);
                 index = parent;

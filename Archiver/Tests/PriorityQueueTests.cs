@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Archiver.DataStructures;
 using NUnit.Framework;
@@ -7,21 +9,32 @@ namespace Archiver.Tests
     [TestFixture]
     public class PriorityQueueTests
     {
-        private static void Test(string input, string expectedResult)
+        private static void Test(string input, string expected)
         {
             var priorityQueue = new PriorityQueue<char>();
-            var inp = input.Split(' ')
-                           .Where(str => str.Length > 0)
-                           .ToList();
+            var expectedValues = expected.Split(' ')
+                                         .Where(str => str.Length > 0)
+                                         .Select(int.Parse)
+                                         .ToList();
+            var expectedKeys = expectedValues.Select(value => (char) value)
+                                             .ToList();
 
-            foreach (var ch in inp)
+            foreach (var value in expectedValues)
             {
-                priorityQueue.Add('\0', int.Parse(ch));
+                priorityQueue.Add((char) value, value);
             }
 
-            var result = string.Join(" ", inp.Select(x => priorityQueue.ExtractMin().Item2).ToList());
+            var keys = new List<char>();
+            var values = new List<int>();
+            foreach (var e in expectedValues)
+            {
+                var (key, value) = priorityQueue.ExtractMin();
+                keys.Add(key);
+                values.Add(value);
+            }
 
-            Assert.AreEqual(result, expectedResult);
+            Assert.AreEqual(keys, expectedKeys);
+            Assert.AreEqual(values, expectedValues);
         }
 
         [TestCase("", "")]

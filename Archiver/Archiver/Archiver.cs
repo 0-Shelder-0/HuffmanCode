@@ -1,6 +1,7 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Archiver.DataStructures;
 using Archiver.Interfaces;
 
@@ -10,6 +11,7 @@ namespace Archiver.Archiver
     {
         private static string Path;
         private static Dictionary<char, int> Dict;
+        private static Dictionary<char, string> Codes;
         private static IPriorityQueue<IBinaryTree<char>> PriorityQueue;
         private static IBinaryTree<char> BinaryTree;
 
@@ -18,6 +20,8 @@ namespace Archiver.Archiver
             InputPath();
             CompilingFrequencyDict();
             BinaryTreeCreation();
+            GetSymbolCods();
+            EncodeFile();
         }
 
         private static void InputPath()
@@ -66,6 +70,37 @@ namespace Archiver.Archiver
             {
                 BinaryTree = PriorityQueue.ExtractMin().Item1;
             }
+        }
+
+        private static void GetSymbolCods()
+        {
+            Codes = new Dictionary<char, string>();
+            Search(BinaryTree.Root, new LinkedList<char>());
+        }
+
+        private static void Search(TreeNode<char> current, LinkedList<char> list)
+        {
+            if (!current.Value.Equals('\0'))
+            {
+                Codes[current.Value] = string.Join('\0', list);
+            }
+            if (current.Left != null)
+            {
+                list.AddLast('0');
+                Search(current.Left, list);
+                list.RemoveLast();
+            }
+            if (current.Right != null)
+            {
+                list.AddLast('1');
+                Search(current.Right, list);
+                list.RemoveLast();
+            }
+        }
+
+        private static void EncodeFile()
+        {
+            
         }
     }
 }

@@ -6,5 +6,6 @@ namespace Archiver.Interfaces
     {
         TreeNode<T> Root { get; }
         void Merge(IBinaryTree<T> otherTree);
+        
     }
 }

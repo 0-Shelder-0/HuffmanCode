@@ -21,5 +21,7 @@ namespace Archiver.DataStructures
                 Right = otherTree.Root
             };
         }
+        
+        
     }
 }

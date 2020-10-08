@@ -1,10 +1,13 @@
+using Archiver.DataStructures;
+
 namespace Archiver
 {
     public class Program
     {
         public static void Main()
         {
-            Archiver.Archiver.Run();
+            var encoder = new Encoder();
+            Archiver.Archiver.Run(encoder);
         }
     }
 }

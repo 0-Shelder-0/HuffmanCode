@@ -1,17 +1,18 @@
+using System;
+
 namespace Archiver.DataStructures
 {
+    [Serializable]
     public class TreeNode<T>
     {
-        public T Value { get; set; }
-        public int Priority { get; set; }
+        public T Value { get; }
         public TreeNode<T> Left, Right;
 
-        public TreeNode() { }
+        public TreeNode() : this(default) { }
 
-        public TreeNode(T value, int priority)
+        public TreeNode(T value)
         {
             Value = value;
-            Priority = priority;
         }
     }
 }

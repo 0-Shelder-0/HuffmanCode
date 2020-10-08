@@ -1,106 +1,66 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Archiver.DataStructures;
+using System.Linq;
 using Archiver.Interfaces;
 
 namespace Archiver.Archiver
 {
-    public class Archiver
+    public static class Archiver
     {
-        private static string Path;
-        private static Dictionary<char, int> Dict;
-        private static Dictionary<char, string> Codes;
-        private static IPriorityQueue<IBinaryTree<char>> PriorityQueue;
-        private static IBinaryTree<char> BinaryTree;
-
-        public static void Run()
+        public static void Run(IEncoder encoder)
         {
-            InputPath();
-            CompilingFrequencyDict();
-            BinaryTreeCreation();
-            GetSymbolCods();
-            EncodeFile();
-        }
-
-        private static void InputPath()
-        {
-            Console.WriteLine("Enter path to file:");
-            // return Console.ReadLine();
-            Path = @"C:\Users\Vlad\Desktop\1.txt";
-        }
-
-        private static void CompilingFrequencyDict()
-        {
-            var stream = new FileStream(Path, FileMode.Open, FileAccess.Read);
-            Dict = new Dictionary<char, int>();
-
-            while (stream.CanRead)
+            while (true)
             {
-                var b = (char) stream.ReadByte();
-                if (b == char.MaxValue) break;
-                if (!Dict.ContainsKey(b))
+                Console.WriteLine("Please, enter parameter: \n1: Encode \n2: Decode");
+                var input = Console.ReadKey();
+                Console.WriteLine();
+                if (input.KeyChar.Equals('1'))
                 {
-                    Dict[b] = 0;
+                    RunEncoder(encoder.Encode);
+                    break;
                 }
-                Dict[b]++;
-            }
-            stream.Close();
-        }
-
-        private static void BinaryTreeCreation()
-        {
-            PriorityQueue = new PriorityQueue<IBinaryTree<char>>();
-
-            foreach (var (symbol, frequency) in Dict)
-            {
-                var tree = new BinaryTree<char>(symbol, frequency);
-                PriorityQueue.Add(tree, frequency);
-            }
-
-            while (PriorityQueue.Count > 1)
-            {
-                var (tree, frequency) = PriorityQueue.ExtractMin();
-                var (otherTree, otherFrequency) = PriorityQueue.ExtractMin();
-                tree.Merge(otherTree);
-                PriorityQueue.Add(tree, frequency + otherFrequency);
-            }
-            if (PriorityQueue.Count > 0)
-            {
-                BinaryTree = PriorityQueue.ExtractMin().Item1;
+                if (input.KeyChar.Equals('2'))
+                {
+                    RunEncoder(encoder.Decode);
+                    break;
+                }
+                Console.WriteLine("Invalid parameter!");
             }
         }
 
-        private static void GetSymbolCods()
+        private static void RunEncoder(Action<Stream, Stream> encoderAction)
         {
-            Codes = new Dictionary<char, string>();
-            Search(BinaryTree.Root, new LinkedList<char>());
+            var (inStream, outStream) = GetStreams();
+            encoderAction(inStream, outStream);
+            inStream.Close();
+            outStream.Close();
         }
 
-        private static void Search(TreeNode<char> current, LinkedList<char> list)
+        private static (Stream, Stream) GetStreams()
         {
-            if (!current.Value.Equals('\0'))
+            while (true)
             {
-                Codes[current.Value] = string.Join('\0', list);
+                var input = Console.ReadLine()
+                                   .Trim()
+                                   .Split()
+                                   .ToList();
+                if (input.Count == 2)
+                {
+                    var str = input[0].Split('\\', '/');
+                    var resultPath = string.Join('\\', str.Take(str.Length - 1).Append(input[1]));
+                    try
+                    {
+                        var inStream = new FileStream($"{input[0]}", FileMode.Open, FileAccess.Read);
+                        var outStream = new FileStream($"{resultPath}", FileMode.Create, FileAccess.Write);
+                        return (inStream, outStream);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e);
+                        throw;
+                    }
+                }
             }
-            if (current.Left != null)
-            {
-                list.AddLast('0');
-                Search(current.Left, list);
-                list.RemoveLast();
-            }
-            if (current.Right != null)
-            {
-                list.AddLast('1');
-                Search(current.Right, list);
-                list.RemoveLast();
-            }
-        }
-
-        private static void EncodeFile()
-        {
-            
         }
     }
 }

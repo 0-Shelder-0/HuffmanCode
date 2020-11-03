@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace Archiver.Interfaces
+namespace HuffmanCode.Interfaces
 {
     public interface IEncoder
     {

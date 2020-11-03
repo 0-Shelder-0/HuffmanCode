@@ -1,11 +1,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using Archiver.Interfaces;
+using System.Text.RegularExpressions;
+using HuffmanCode.Interfaces;
 
-namespace Archiver.Archiver
+namespace HuffmanCode.HuffmanCode
 {
-    public static class Archiver
+    public static class HuffmanCode
     {
         public static void Run(IEncoder encoder)
         {
@@ -40,10 +41,10 @@ namespace Archiver.Archiver
         {
             while (true)
             {
-                var input = Console.ReadLine()
-                                   .Trim()
-                                   .Split()
-                                   .ToList();
+                Console.WriteLine("Enter file path and name output file: '[:path]' '[:name]'");
+                var input = Regex.Matches(Console.ReadLine(), @"'[^']+'")
+                                 .Select(item => item.Value.Trim('\''))
+                                 .ToList();
                 if (input.Count == 2)
                 {
                     var str = input[0].Split('\\', '/');
@@ -56,8 +57,7 @@ namespace Archiver.Archiver
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
-                        throw;
+                        Console.WriteLine(e.Message);
                     }
                 }
             }

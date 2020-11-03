@@ -1,4 +1,4 @@
-namespace Archiver.DataStructures
+namespace HuffmanCode.DataStructures
 {
     public class QueueNode<TKey>
     {

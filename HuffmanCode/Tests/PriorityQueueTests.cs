@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Archiver.DataStructures;
+using HuffmanCode.DataStructures;
 using NUnit.Framework;
 
-namespace Archiver.Tests
+namespace HuffmanCode.Tests
 {
     [TestFixture]
     public class PriorityQueueTests

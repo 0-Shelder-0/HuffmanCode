@@ -1,6 +1,6 @@
-using Archiver.DataStructures;
+using HuffmanCode.DataStructures;
 
-namespace Archiver.Interfaces
+namespace HuffmanCode.Interfaces
 {
     public interface IBinaryTree<T>
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Archiver.Interfaces;
+using HuffmanCode.Interfaces;
 
-namespace Archiver.DataStructures
+namespace HuffmanCode.DataStructures
 {
     public class PriorityQueue<TKey> : IPriorityQueue<TKey>
     {

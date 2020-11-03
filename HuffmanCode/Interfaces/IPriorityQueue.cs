@@ -1,6 +1,6 @@
 using System;
 
-namespace Archiver.Interfaces
+namespace HuffmanCode.Interfaces
 {
     public interface IPriorityQueue<TKey>
     {

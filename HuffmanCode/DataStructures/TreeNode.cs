@@ -1,6 +1,6 @@
 using System;
 
-namespace Archiver.DataStructures
+namespace HuffmanCode.DataStructures
 {
     [Serializable]
     public class TreeNode<T>

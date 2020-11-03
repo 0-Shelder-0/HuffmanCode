@@ -5,9 +5,10 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using Archiver.Interfaces;
+using HuffmanCode.DataStructures;
+using HuffmanCode.Interfaces;
 
-namespace Archiver.DataStructures
+namespace HuffmanCode.HuffmanCode
 {
     public class Encoder : IEncoder
     {
@@ -89,9 +90,9 @@ namespace Archiver.DataStructures
                        : null;
         }
 
-        private Dictionary<char, char[]> GetSymbolsWithCodes(IBinaryTree<char> binaryTree)
+        private Dictionary<char, string> GetSymbolsWithCodes(IBinaryTree<char> binaryTree)
         {
-            var codes = new Dictionary<char, char[]>();
+            var codes = new Dictionary<char, string>();
             foreach (var (symbol, code) in Search(binaryTree.Root, new LinkedList<char>()))
             {
                 codes[symbol] = code;
@@ -105,7 +106,7 @@ namespace Archiver.DataStructures
             var codes = new Dictionary<string, char>();
             foreach (var (symbol, code) in Search(binaryTree.Root, new LinkedList<char>()))
             {
-                codes[string.Join("", code)] = symbol;
+                codes[code] = symbol;
             }
 
             return codes;
@@ -114,7 +115,7 @@ namespace Archiver.DataStructures
         private bool EncodeFile(Stream inStream,
                                 Stream outStream,
                                 IBinaryTree<char> binaryTree,
-                                IReadOnlyDictionary<char, char[]> codes)
+                                Dictionary<char, string> codes)
         {
             inStream.Seek(0, SeekOrigin.Begin);
             if (binaryTree.GetType().GetCustomAttribute<SerializableAttribute>() == null)
@@ -139,27 +140,38 @@ namespace Archiver.DataStructures
             outStream.Position = outStream.Length;
         }
 
-        private void CompressAndWrite(Stream inStream, Stream outStream, IReadOnlyDictionary<char, char[]> codes)
+        private void CompressAndWrite(Stream inStream, Stream outStream, IReadOnlyDictionary<char, string> codes)
         {
             var buffer = new List<char>();
             while (inStream.Position < inStream.Length)
             {
                 if (buffer.Count > 7)
                 {
-                    var current = Convert.ToByte(string.Join("", buffer.Take(8)), 2);
-                    outStream.WriteByte(current);
-                    buffer = buffer.Skip(8).ToList();
+                    buffer = WriteByte(outStream, buffer);
                 }
                 else
                 {
                     var readByte = (char) inStream.ReadByte();
-                    buffer.AddRange(codes[readByte]);
+                    Console.Write($"\r{inStream.Position / inStream.Length * 100:f1}%");
+                    buffer.AddRange(codes[readByte].ToCharArray());
                 }
+            }
+            if (buffer.Count > 7)
+            {
+                buffer = WriteByte(outStream, buffer);
             }
             if (buffer.Count > 0)
             {
                 WriteLastByte(outStream, buffer);
             }
+        }
+
+        private static List<char> WriteByte(Stream outStream, List<char> buffer)
+        {
+            var current = Convert.ToByte(string.Join("", buffer.Take(8)), 2);
+            outStream.WriteByte(current);
+            buffer = buffer.Skip(8).ToList();
+            return buffer;
         }
 
         private static void WriteLastByte(Stream outStream, List<char> buffer)
@@ -172,11 +184,11 @@ namespace Archiver.DataStructures
             outStream.WriteByte((byte) count);
         }
 
-        private IEnumerable<Tuple<char, char[]>> Search(TreeNode<char> current, LinkedList<char> list)
+        private IEnumerable<Tuple<char, string>> Search(TreeNode<char> current, LinkedList<char> list)
         {
             if (!current.Value.Equals('\0'))
             {
-                yield return Tuple.Create(current.Value, list.ToArray());
+                yield return Tuple.Create(current.Value, string.Join("", list));
                 yield break;
             }
             if (current.Left != null)

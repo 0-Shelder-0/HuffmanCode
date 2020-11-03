@@ -2,16 +2,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Encoder = Archiver.DataStructures.Encoder;
 
-namespace Archiver.Tests
+namespace HuffmanCode.Tests
 {
     [TestFixture]
-    public class ArchiverTests
+    public class HuffmanCodeTests
     {
         private static void Test(string input)
         {
-            var encoder = new Encoder();
+            var encoder = new HuffmanCode.Encoder();
             var inStream = new MemoryStream(Encoding.Default.GetBytes(input));
             var outStream = new MemoryStream();
             var resultStream = new MemoryStream();
@@ -46,7 +45,7 @@ namespace Archiver.Tests
 
         private static void BigTest(string path)
         {
-            var encoder = new Encoder();
+            var encoder = new HuffmanCode.Encoder();
             var inStream = new FileStream(path, FileMode.Open, FileAccess.Read);
             var bytes = new byte[inStream.Length];
             inStream.Read(bytes);

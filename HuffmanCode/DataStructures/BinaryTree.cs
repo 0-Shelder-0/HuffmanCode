@@ -1,7 +1,7 @@
 using System;
-using Archiver.Interfaces;
+using HuffmanCode.Interfaces;
 
-namespace Archiver.DataStructures
+namespace HuffmanCode.DataStructures
 {
     [Serializable]
     public class BinaryTree<T> : IBinaryTree<T>

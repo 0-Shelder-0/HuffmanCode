@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archiver", "Archiver\Archiver.csproj", "{55396264-0125-4FCB-90C7-8CABDD4EF011}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HuffmanCode", "HuffmanCode\HuffmanCode.csproj", "{55396264-0125-4FCB-90C7-8CABDD4EF011}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
